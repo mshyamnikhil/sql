@@ -1,7 +1,7 @@
-drop Table tbl
+create Table tbl
 (
- SalesAgent nvarchar(10),
- SalesCountry nvarchar(10),
+ SalesAgent varchar(10),
+ SalesCountry varchar(10),
  SalesAmount int
 )
 Insert into tbl (SalesAgent ,SalesCountry ,SalesAmount )values
@@ -31,14 +31,15 @@ Insert into tbl (SalesAgent ,SalesCountry ,SalesAmount )values
 
 
 
-Select SalesAgent, India, US, UK
+Select salescountry , shyam, nikhil, sriraj
 from tbl
 Pivot
 (
-   Sum(SalesAmount) for SalesCountry in ([India],[US],[UK])
+   Sum(SalesAmount) for SalesAgent in ([shyam],[nikhil],[sriraj])
 ) as PivotTable
 
-
+select * from tbl
+where salesagent = 'shyam'
 
 ----------------------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------------------
@@ -66,7 +67,7 @@ unpivot
 ---------------------------------------------------------------------------------------------------------
 
 
-Create Table tb2
+create Table tb2
 (
  SalesAgent varchar(10),
  India int,
@@ -92,7 +93,7 @@ UNPIVOT
 -----------------------------------------------------------------------
 
 
-Create Table Employees
+create Table Employees
 (
     Id int primary key,
     Name varchar(10),
@@ -120,12 +121,7 @@ Values(1, 'shyam', 'Male', 8000),
 
 
 
- WITH Result AS
-(
-    SELECT name, Salary, RANK() OVER (partition by gender ORDER BY Salary DESC) AS Salary_Rank
-    FROM Employees
-)
-SELECT TOP 1 Salary FROM Result WHERE gender is male and Salary_Rank = 3  
+ select * from employees
 
 
 WITH Result AS
@@ -143,21 +139,21 @@ AND Gender = 'Female'
 ---------------------------------------------------------------------------------
 ----------------------------------------------------------------------------------
 
-SELECT MIN(salary)
+SELECT MIN(salary) as min_salary
 FROM Employees;
 
 
 
-SELECT COUNT(*)
+SELECT COUNT(*) as count_salary
 FROM Employees;
 
 
 
-SELECT SUM(salary)
+SELECT SUM(salary) as sum_salary
 FROM Employees;
 
 
-SELECT AVG(salary)
+SELECT AVG(salary) as avg_salary
 FROM Employees;
 
 
@@ -165,7 +161,7 @@ FROM Employees;
 ---------------------------------------------------------------
 
 
-CREATE TABLE tb3
+create TABLE tb3
 (
   Id int Primary Key,
   Name varchar(10),
@@ -173,7 +169,9 @@ CREATE TABLE tb3
   DepartmentId int
 )
 
-CREATE TABLE tb3Department
+ select * from tb3
+
+create TABLE tb3Department
 (
  DeptId int Primary Key,
  DeptName varchar(10)
@@ -195,7 +193,8 @@ Insert into tb3Department (deptid ,deptname )  values
  (5,'satya', 'Female', 1),
  (6,'vamsi', 'Male', 3)
 
-
+ select * from  tb3
+ select * from tb3Department
 
 
  --pivot
@@ -253,7 +252,7 @@ Update EmployeesByDepartment set Gender = 'Male' where Id = 1
 ---------------------------------------------------------------------------------------
 
 
-Create Table tb4
+create Table tb4
 (
   EmployeeId int Primary key,
   Name varchar(10),
@@ -296,3 +295,50 @@ EmpCTE.[Level]
 from EmployeesCTE EmpCTE
 left join EmployeesCTE MgrCTE
 on EmpCTE.ManagerId = MgrCTE.EmployeeId
+
+
+--------------------------------------------------------------------------------------------
+                                   --case  condition--
+--------------------------------------------------------------------------------------------
+
+SELECT name, salary,
+CASE WHEN salary > 5000 THEN 'The salary is greater than 5000'
+WHEN salary = 5000 THEN 'The salary is 5000'
+ELSE 'The salary is under 5000'
+END AS salarytext 
+FROM employees; 
+
+
+---------------------------------------------------------------------------------------------------------
+                --    exist  ---
+-------------------------------------------------------------------------------------------------------
+
+SELECT name 
+FROM tb3
+WHERE EXISTS (SELECT deptname FROM tb3Department WHERE tb3.DepartmentId = tb3Department.deptid  and gender = 'male' );
+
+
+----------------------------------------------------------------------------------------------------------
+                  -- is null --
+--------------------------------------------------------------------------------------------------------
+
+select name from tb4
+where ManagerId is null 
+
+
+
+
+
+
+
+
+
+
+----------------------------------------------------------------------------------
+         -- if & if else --
+----------------------------------------------------------------------------------
+
+IF EXISTS (SELECT * FROM Employees WHERE Salary > 1000)
+   PRINT 'High earners exist'
+ELSE
+   PRINT 'No high earners';
