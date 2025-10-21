@@ -1,0 +1,152 @@
+create table statess (state varchar(20 ) )
+
+insert into statess (state) values
+('Callifornia'),  
+('IOWA'), 
+('Texas'), 
+('Newyork') ,
+('Delhi') 
+
+update statess
+SET State = CASE 
+    WHEN State = 'Callifornia' THEN 'CA'
+    WHEN State = 'IOWA' THEN 'IA'
+    WHEN State = 'Texas' THEN 'Tx'
+    WHEN State = 'Newyork' THEN 'NY'
+    WHEN State = 'Delhi' THEN 'DL'
+    ELSE null  
+END
+
+select * from states
+
+
+---------------------------------------------------------------------------------------------
+
+
+Create Table tb2Products
+(
+ Id int identity primary key,
+ Name varchar(50),
+ decr varchar(250)
+)
+
+Create Table tb2ProductSales
+(
+ Id int primary key identity,
+ ProductId int foreign key references tb2products(Id),
+ UnitPrice int,
+ QuantitySold int
+)
+
+
+Insert into tb2products values ('TV', '52 inch black color LCD TV')
+Insert into tb2products values ('Laptop', 'Very thin black color acer laptop')
+Insert into tb2products values ('Desktop', 'HP high performance desktop')
+
+Insert into tb2productsales values(3, 450, 5)
+Insert into tb2productsales values(2, 250, 7)
+Insert into tb2productsales values(3, 450, 4)
+Insert into tb2productsales values(3, 450, 9)]]
+
+select * from tb2products
+
+select * from tb2productsales
+
+
+
+select id , name , decr from tb2Products
+where id not in (select productid from tb2productsales)
+
+
+Select distinct Name,
+(Select SUM(QuantitySold) from tblProductSales where ProductId = tblProducts.Id) as TotalQuantity
+from tblProducts
+order by Name
+
+
+
+CREATE VIEW shyam AS
+SELECT id, name
+FROM tb2Products ;
+select * from shyam
+
+Select ASCII('A')
+
+select char(67)
+
+Select LTRIM('   Hello')
+
+Select RTRIM('Hello   ')
+
+Select LTRIM(RTRIM('   Hello   '))
+
+Select LOWER('CONVERT This String Into Lower Case')
+
+Select UPPER('CONVERT This String Into upper Case')
+
+Select REVERSE('shyam')
+
+Select LEN('SQLFunctions')
+
+Select LEFT('ABCDE', 3)
+
+Select RIGHT('ABCDE', 3)
+
+Select CHARINDEX('@','sara@aaa.com',1)
+
+Select SUBSTRING('John@bbb.com',1,3)
+
+SELECT SUBSTRING('CustomerName', 1, 5)
+
+SELECT REPLICATE('sbs', 3)
+
+SELECT 'shyam' + SPACE(1) + 'nikhil';
+
+SELECT PATINDEX('%.%', 'W3Schools.com');
+
+
+SELECT PATINDEX('%[ol]%', 'W3Schools.com');
+
+
+SELECT PATINDEX('%[z]%', 'W3Schools.com');
+
+select name ,replace( name ,'desktop' ,'ad') as replacedname from tb2Products
+
+Select Name,  STUFF(Name, 2, 3, '*****') as Stuffedname
+From tb2Products
+
+
+CREATE TABLE [tblDateTime]
+(
+ [c_time] [time](7) NULL,
+ [c_date] [date] NULL,
+ [c_smalldatetime] [smalldatetime] NULL,
+ [c_datetime] [datetime] NULL,
+ [c_datetime2] [datetime2](7) NULL,
+ [c_datetimeoffset] [datetimeoffset](7) NULL
+)
+
+
+INSERT INTO tblDateTime VALUES (GETDATE(),GETDATE(),GETDATE(),GETDATE(),GETDATE(),GETDATE())
+
+select * from [tblDateTime]
+
+
+SELECT COALESCE(NULL, NULL, 'Hello', 'World');
+
+
+SELECT GETDATE();
+
+SELECT CURRENT_TIMESTAMP;
+
+SELECT DATEPART(YEAR, GETDATE()); 
+
+SELECT DATENAME(MONTH, GETDATE()); 
+
+SELECT DATEADD(DAY, -7, GETDATE());  
+
+SELECT DATEDIFF(DAY, '2025-01-01', GETDATE());  
+
+SELECT ISDATE('2025-10-15'); 
+
+SELECT FORMAT(GETDATE(), 'dd-MM-yyyy');
