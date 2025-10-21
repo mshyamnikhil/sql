@@ -1,0 +1,89 @@
+
+create Table tl1
+(
+ SalesAgent varchar(10),
+ SalesCountry varchar(10),
+ SalesAmount int,
+ deptid int 
+)
+Insert into tl1 (SalesAgent ,SalesCountry ,SalesAmount, deptid  )values
+('shyam', 'UK', 200,1),
+('nikhil', 'US', 180,2),
+('nikhil', 'UK', 260,3),
+('sriraj', 'India', 450,4),
+('shyam', 'India', 350,1),
+('sriraj', 'US', 200,1),
+('shyam', 'US', 130,3),
+('nikhil', 'India', 540,2),
+('nikhil', 'UK', 120,3),
+('sriraj', 'UK', 220,2),
+('nikhil', 'UK', 420,2),
+('sriraj', 'US', 320,2),
+('shyam', 'US', 340,3),
+('shyam', 'UK', 660,1),
+('nikhil', 'India', 430,1),
+('sriraj', 'India', 230,2),
+('sriraj', 'India', 280,3),
+('shyam', 'UK', 480,4),
+('nikhil', 'US', 360,1),
+('sriraj', 'UK', 140,2)
+
+
+create TABLE de11
+(
+ DeptId int ,
+ DeptName varchar(10)
+)
+
+Insert into de11 (deptid ,deptname )  values
+ (1,'IT'),
+ (2,'Payroll'),
+ (3,'HR'),
+ (4,'Admin')
+
+ alter PROCEDURE Getspnikhi
+ @salesagent varchar(15)
+
+AS
+BEGIN
+    SELECT *
+    FROM (
+        SELECT o.SalesAgent, o.SalesAmount, od.deptname
+        FROM  tl1 o
+        JOIN de11 od ON o.deptid = od.deptid
+		where @salesagent =o.SalesAgent
+       
+    ) AS SourceTable
+    PIVOT (
+        SUM(SalesAmount)
+        FOR SalesAgent IN ([shyam], [nikhil], [sriraj])
+    ) AS PivotTable  
+END
+
+
+exec Getspnikhi 
+
+create table statess (state varchar(20 ) )
+
+insert into statess (state) values
+('Callifornia'),  
+('IOWA'), 
+('Texas'), 
+('Newyork') ,
+('Delhi') ,
+('xyz')
+
+
+update statess
+SET State = CASE 
+    WHEN State = 'Callifornia' THEN 'CA'
+    WHEN State = 'IOWA' THEN 'IA'
+    WHEN State = 'Texas' THEN 'Tx'
+    WHEN State = 'Newyork' THEN 'NY'
+    WHEN State = 'Delhi' THEN 'DL'
+	when state = 'xyz' then''
+    ELSE null  
+END
+
+select * from states
+
