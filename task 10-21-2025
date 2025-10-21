@@ -1,0 +1,99 @@
+create TABLE tb3
+(
+  Id int Primary Key,
+  Name varchar(10),
+  Gender varchar(10),
+  DepartmentId int
+)
+
+   insert into tb3 ( id , name, gender , departmentid ) values
+ (1,'shyam', 'Male', 1),
+ (2,'bhavana', 'Female', 2),
+ (3,'sriraj', 'Male', 3),
+ (4,'satya', 'Female', 4)
+
+
+ alter table tb3 add firstname varchar(20)
+  alter table tb3 add lastname varchar(20) 
+   alter table tb3 add age int
+     alter table tb3 add city varchar(20) 
+ alter table tb3 add salary int
+  alter table tb3 add Department varchar(20)
+
+update tb3
+SET name = 'shyam' 
+where id =1  
+update tb3
+SET firstname = 'bhavana' 
+where id =2
+update tb3
+SET firstname = 'sri' 
+where id =3
+update tb3
+SET firstname = 'mohini' 
+where id =4
+
+update tb3
+SET lastname = 'nikhil' 
+where id =1  
+update tb3
+SET lastname = 'sri' 
+where id =2
+update tb3
+SET lastname = 'raj' 
+where id =3
+update tb3
+SET lastname = 'satya' 
+where id =4
+
+
+update tb3
+SET age = 21, Department ='IT' , City ='Hyderabad' ,Salary=60000
+where id =1  
+
+update tb3
+SET age = 20, Department ='HR' , City ='Chennai' ,Salary=55000
+where id =2  
+
+update tb3
+SET age = 18, Department ='Marketing' , City ='Bangalore' ,Salary=52000
+where id =3
+
+update tb3
+SET age = 22, Department ='Finance' , City ='Delhi' ,Salary=48000
+where id =4
+
+
+select * from tb3
+
+select * from tb3
+where id = 1
+
+select * from tb3
+where lastname ='nikhil'
+
+select  firstname , lastname from tb3
+where lastname like '%i%'
+
+select * from tb3
+where city ='Hyderabad'
+order by name
+
+SELECT Name, Age
+FROM tb3
+WHERE Age > 20
+ORDER BY Name;
+
+SELECT Salary
+FROM tb3
+WHERE Salary > 50000
+GROUP BY Salary
+ORDER BY Salary;
+
+SELECT City, COUNT(id) AS TotalEmployees
+FROM tb3
+GROUP BY City;
+
+
+
+
