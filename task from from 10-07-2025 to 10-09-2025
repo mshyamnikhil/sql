@@ -1,0 +1,565 @@
+create Table tbl
+(
+ SalesAgent varchar(10),
+ SalesCountry varchar(10),
+ SalesAmount int
+)
+Insert into tbl (SalesAgent ,SalesCountry ,SalesAmount )values
+('shyam', 'UK', 200),
+('nikhil', 'US', 180),
+('nikhil', 'UK', 260),
+('sriraj', 'India', 450),
+('shyam', 'India', 350),
+('sriraj', 'US', 200),
+('shyam', 'US', 130),
+('nikhil', 'India', 540),
+('nikhil', 'UK', 120),
+('sriraj', 'UK', 220),
+('nikhil', 'UK', 420),
+('sriraj', 'US', 320),
+('shyam', 'US', 340),
+('shyam', 'UK', 660),
+('nikhil', 'India', 430),
+('sriraj', 'India', 230),
+('sriraj', 'India', 280),
+('shyam', 'UK', 480),
+('nikhil', 'US', 360),
+('sriraj', 'UK', 140)
+
+
+
+
+
+
+Select salescountry , shyam, nikhil, sriraj
+from tbl
+Pivot
+(
+   Sum(SalesAmount) for SalesAgent in ([shyam],[nikhil],[sriraj])
+) as PivotTable
+
+select * from tbl
+where salesagent = 'shyam'
+
+----------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------
+
+
+select salesagent ,salescountry , salesamount from 
+(
+
+Select SalesAgent, India, US, UK
+from tbl
+Pivot
+(
+   Sum(SalesAmount) for SalesCountry in ([India],[US],[UK])
+) as PivotTable
+
+) as p 
+unpivot 
+(
+       SalesAmount
+       FOR salesCountry IN (India, US ,UK)
+) AS UnpivotExample
+
+
+--------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------
+
+
+create Table tb2
+(
+ SalesAgent varchar(10),
+ India int,
+ US int,
+ UK int
+)
+
+
+Insert into tb2 (SalesAgent,India,US,UK )
+ values ('sriraj', 960, 520, 360),
+       ('nikhil', 970, 540, 800)
+
+
+SELECT SalesAgent, Country, SalesAmount
+FROM tb2
+UNPIVOT
+(
+       SalesAmount
+       FOR Country IN (India, US ,UK)
+) AS UnpivotExample
+
+-----------------------------------------------------------------
+-----------------------------------------------------------------------
+
+
+create Table Employees
+(
+    Id int primary key,
+    Name varchar(10),
+    Gender varchar(10),
+    Salary int
+)
+
+ Insert Into Employees (
+    Id ,
+    Name ,
+    Gender ,
+    Salary 
+)
+Values(1, 'shyam', 'Male', 8000),
+ (2, 'nikhil', 'Male', 8000),
+
+ (3, 'bhavana', 'Female', 5000),
+ (4, 'satya', 'Female', 4000),
+ (5, 'sriraj', 'Male', 3500),
+ (6, 'sri', 'Female', 6000),
+ (7, 'vamsi', 'Male', 6500),
+ (8, 'mounika', 'Female', 4500),
+ (9, 'hemanth', 'Male', 7000),
+ (10, 'sunny', 'Male', 6800)
+
+
+
+ select * from employees
+
+
+WITH Result AS
+(
+    SELECT Salary, Gender,
+           DENSE_RANK() OVER (PARTITION BY Gender ORDER BY Salary DESC)
+           AS Salary_Rank
+    FROM Employees
+)
+SELECT TOP 1 Salary FROM Result WHERE Salary_Rank = 1
+AND Gender = 'Female'
+
+
+
+---------------------------------------------------------------------------------
+----------------------------------------------------------------------------------
+
+SELECT MIN(salary) as min_salary
+FROM Employees;
+
+
+
+SELECT COUNT(*) as count_salary
+FROM Employees;
+
+
+
+SELECT SUM(salary) as sum_salary
+FROM Employees;
+
+
+SELECT AVG(salary) as avg_salary
+FROM Employees;
+
+
+-----------------------------------------------------------------------
+---------------------------------------------------------------
+
+
+create TABLE tb3
+(
+  Id int Primary Key,
+  Name varchar(10),
+  Gender varchar(10),
+  DepartmentId int
+)
+
+ select * from tb3
+
+create TABLE tb3Department
+(
+ DeptId int Primary Key,
+ DeptName varchar(10)
+)
+
+Insert into tb3Department (deptid ,deptname )  values
+ (1,'IT'),
+ (2,'Payroll'),
+ (3,'HR'),
+ (4,'Admin')
+
+
+
+ Insert into tb3 ( id , name, gender , departmentid ) values
+ (1,'shyam', 'Male', 3),
+ (2,'nikhil', 'Male', 2),
+ (3,'bhavana', 'Female', 1),
+ (4,'sriraj', 'Male', 4),
+ (5,'satya', 'Female', 1),
+ (6,'vamsi', 'Male', 3)
+
+ select * from  tb3
+ select * from tb3Department
+
+
+ --pivot
+ select male , female
+  from 
+  ( 
+ select id , name, gender , departmentid from tb3 ) as sourcetable
+ pivot (  max(name) for gender in ( [male] , [female]) ) as pivotable
+
+
+ ------------------------------------------------
+                --cte -----
+  -----------------------------------------------------
+ With EmployeeCount(DepartmentId, TotalEmployees)
+as
+(
+ Select DepartmentId, COUNT(*) as TotalEmployees
+ from tb3
+ group by DepartmentId
+)
+  select * from employeecount
+--Select DeptName, TotalEmployees
+--from tb3Department
+--join EmployeeCount
+--on tb3Department.DeptId = EmployeeCount.DepartmentId
+--order by TotalEmployees
+
+
+-------------------------------------------------------------------------------
+   --cte updation --
+------------------------------------------------------------------------------
+
+With Employees_Name_Gender (name , gender , id)
+as
+(
+ Select  Name, Gender, Id from tb3
+)
+select * from Employees_Name_Gender where  Gender = 'male' and Id = 2
+ 
+
+
+With EmployeesByDepartment
+as
+(
+ Select Id, Name, Gender, DeptName 
+ from tb3
+ join tb3Department
+ on tb3Department.DeptId = tb3.DepartmentId
+)
+Update EmployeesByDepartment set Gender = 'Male' where Id = 1
+
+
+
+---------------------------------------------------------------------------------------------------
+       --CTE RECURSIVE -- 
+---------------------------------------------------------------------------------------
+
+
+create Table tb4
+(
+  EmployeeId int Primary key,
+  Name varchar(10),
+  ManagerId int
+)
+
+Insert into tb4(EmployeeId ,Name ,ManagerId)
+values
+ (1, 'shyam', 2),
+ (2, 'nikhil', null),
+ (3, 'vamsi', 2),
+ (4, 'sri', 3),
+ (5, 'bhavana', 1),
+ (6, 'hemanth', 3),
+ (7, 'sriraj', 1),
+ (8, 'Sam', 5),
+ (9, 'satya', 1)
+
+ select * from tb4
+
+
+ With
+  EmployeesCTE (EmployeeId, Name, ManagerId, [Level])
+  as
+  (
+    Select EmployeeId, Name, ManagerId, 1
+    from tb4
+    where ManagerId is null
+    
+    union all
+    
+    Select tb4.EmployeeId, tb4.Name, 
+    tb4.ManagerId, EmployeesCTE.[Level] + 1
+    from tb4
+    join EmployeesCTE
+    on tb4.ManagerID = EmployeesCTE.EmployeeId
+  )
+Select EmpCTE.Name as Employee, Isnull(MgrCTE.Name, 'Super Boss') as Manager, 
+EmpCTE.[Level] 
+from EmployeesCTE EmpCTE
+left join EmployeesCTE MgrCTE
+on EmpCTE.ManagerId = MgrCTE.EmployeeId
+
+
+--------------------------------------------------------------------------------------------
+                                   --case  condition--
+--------------------------------------------------------------------------------------------
+
+SELECT name, salary,
+CASE WHEN salary > 5000 THEN 'The salary is greater than 5000'
+WHEN salary = 5000 THEN 'The salary is 5000'
+ELSE 'The salary is under 5000'
+END AS salarytext 
+FROM employees; 
+
+
+---------------------------------------------------------------------------------------------------------
+                --    exist  ---
+-------------------------------------------------------------------------------------------------------
+
+SELECT name 
+FROM tb3
+WHERE EXISTS (SELECT deptname FROM tb3Department WHERE tb3.DepartmentId = tb3Department.deptid  and gender = 'male' );
+
+
+----------------------------------------------------------------------------------------------------------
+                  -- is null --
+--------------------------------------------------------------------------------------------------------
+
+select name from tb4
+where ManagerId is null 
+
+SELECT Name, ISNULL(ManagerId, '12') AS manager 
+FROM tb4;
+
+select * from tb4
+
+
+
+----------------------------------------------------------------------------------
+         -- if & if else --
+----------------------------------------------------------------------------------
+
+IF EXISTS (SELECT * FROM Employees WHERE Salary > 1000)
+   PRINT 'High earners exist'
+ELSE
+   PRINT 'No high earners';
+
+
+
+   --------------------------------------------------------------
+
+   
+create TABLE tb3
+(
+  Id int Primary Key,
+  Name varchar(10),
+  Gender varchar(10),
+  DepartmentId int
+)
+
+   insert into tb3 ( id , name, gender , departmentid ) values
+ (1,'shyam', 'Male', 1),
+ (2,'bhavana', 'Female', 2),
+ (3,'sriraj', 'Male', 3),
+ (4,'satya', 'Female', 4)
+
+
+ alter table tb3 add firstname varchar(20)
+  alter table tb3 add lastname varchar(20) 
+   alter table tb3 add age int
+     alter table tb3 add city varchar(20) 
+ alter table tb3 add salary int
+  alter table tb3 add Department varchar(20)
+
+update tb3
+SET name = 'shyam' 
+where id =1  
+update tb3
+SET firstname = 'bhavana' 
+where id =2
+update tb3
+SET firstname = 'sri' 
+where id =3
+update tb3
+SET firstname = 'mohini' 
+where id =4
+
+update tb3
+SET lastname = 'nikhil' 
+where id =1  
+update tb3
+SET lastname = 'sri' 
+where id =2
+update tb3
+SET lastname = 'raj' 
+where id =3
+update tb3
+SET lastname = 'satya' 
+where id =4
+  
+   case 
+    WHEN id = 1  THEN 'shyam'
+    WHEN id = 2 THEN 'bhavana'
+    WHEN id = 3 THEN 'sriraj'
+    WHEN id = 4 then 'satya'
+    ELSE null  
+END
+
+update statess
+SET State = CASE 
+    WHEN State = 'Callifornia' THEN 'CA'
+    WHEN State = 'IOWA' THEN 'IA'
+    WHEN State = 'Texas' THEN 'Tx'
+    WHEN State = 'Newyork' THEN 'NY'
+    WHEN State = 'Delhi' THEN 'DL'
+	when state = 'xyz' then''
+    ELSE null  
+END
+                  ('shyam','nikhil',21,'Hyderabad', 60000,'IT'),
+				   ('bhavana','sri',20,'Chenai', 52000,'HR'),
+				    ('sri','raj',18,'Bangalore', 55000,'Marketing'),
+					 ('mohini','satya',22,'Delhi', 50000,'Finance')
+
+
+ select * from tb3
+
+
+ Last_Name
+
+Name
+
+Age
+
+Department
+
+City
+
+Salary
+
+
+sp_helptext spGetb3emp
+
+Create Procedure spGetb3emp
+@Gender varchar(50),
+@DepartmentId int
+as
+Begin
+  Select Name, Gender from tb3 Where Gender = @Gender and DepartmentId = @DepartmentId
+End
+
+select 
+
+EXEC spGetb3emp 'male' , 3 
+
+
+CREATE PROCEDURE GetEmployees
+    @DepartmentID INT = NULL,              
+    @name VARCHAR(10),               
+    @gender VARCHAR(10)     
+AS
+BEGIN
+   
+
+ 
+
+    SELECT e.*
+    FROM Em e
+    INNER JOIN CityCTE c ON e.City = LTRIM(RTRIM(c.City))
+    WHERE (@DepartmentID IS NULL OR e.DepartmentID = @DepartmentID)
+      AND e.Name LIKE '%' + @NameFilter + '%';
+END;
+
+select * from tb3
+
+alter PROCEDURE GetEmployees
+ 	@departmentid int ,
+    @NameList VARCHAR(MAX) ,
+	@gender varchar 
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+  
+    ;WITH NameCTE AS (
+        SELECT LTRIM(RTRIM(vALUE)) AS Name
+        FROM STRING_SPLIT(@NameList, ',')
+    )
+    SELECT e.*
+    FROM tb3 e
+    INNER JOIN NameCTE n ON e.Name = n.Name
+	WHERE (@DepartmentID IS NULL OR e.DepartmentID = @DepartmentID)
+	;
+END;
+
+
+EXEC GetEmployees
+    @NameList = 'SHYAM'	,'SRIRAJ' ,
+    @DepartmentID = NULL, 
+    @GENDER = 'MALE' 
+
+
+	create TABLE Employees (
+    EmployeeID INT,
+    Name VARCHAR(50),
+    DepartmentID INT,
+    City VARCHAR(50),
+    Salary DECIMAL(10, 2)
+);
+
+INSERT INTO Employees (EmployeeID, Name, DepartmentID, City, Salary)
+VALUES (101, 'shyam', 1, 'Delhi', 60000.00);
+
+
+INSERT INTO Employees (EmployeeID, Name, DepartmentID, City, Salary)
+VALUES 
+(102, 'nikhil', 2, 'Mumbai', 55000.00),
+(103, 'sriraj', 1, 'Delhi', 62000.00),
+(104, 'vamsi', 3, 'Bangalore', 58000.00);
+
+SELECT * FROM Employees;
+
+drop PROCEDURE GetEmployeesByFilter
+    @DepartmentID INT = NULL,             
+    @CityList NVARCHAR(MAX),               
+    @NameFilter VARCHAR(50)                
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    
+    ;WITH CityCTE AS (
+        SELECT value AS City
+        FROM STRING_SPLIT(@CityList, ',')
+    )
+
+    SELECT e.*
+    FROM Employees e
+    INNER JOIN CityCTE c ON e.City = LTRIM(RTRIM(c.City))
+    WHERE (@DepartmentID IS NULL OR e.DepartmentID = @DepartmentID)
+      AND e.Name LIKE '%' + @NameFilter + '%';
+END;
+
+
+EXEC GetEmployeesByFilter 
+    @DepartmentID = NULL, 
+    @CityList = 'Delhi,Mumbai,Bangalore', 
+    @NameFilter = 'an';
+
+
+	CREATE FUNCTION dbo.SplitString (
+    @Input NVARCHAR(MAX),
+    @Delimiter CHAR(1)
+)
+RETURNS @Result TABLE (Value NVARCHAR(MAX))
+AS
+BEGIN
+    DECLARE @Start INT = 1, @End INT;
+
+    WHILE CHARINDEX(@Delimiter, @Input, @Start) > 0
+    BEGIN
+        SET @End = CHARINDEX(@Delimiter, @Input, @Start);
+        INSERT INTO @Result VALUES (SUBSTRING(@Input, @Start, @End - @Start));
+        SET @Start = @End + 1;
+    END
+
+    INSERT INTO @Result VALUES (SUBSTRING(@Input, @Start, LEN(@Input) - @Start + 1));
+    RETURN;
+END;
